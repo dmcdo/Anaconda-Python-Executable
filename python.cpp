@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
         commandline += argv[i];
         commandline += " ";
     }
-    commandline += " \"";
+    commandline += " ; exit ; \"";
 
     // Create Python process
     STARTUPINFOA si;
