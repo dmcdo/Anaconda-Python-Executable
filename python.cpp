@@ -2,10 +2,6 @@
 #include <string>
 #include <windows.h>
 
-#define PWSH1 ("powershell.exe -ExecutionPolicy ByPass -Command \"& ")
-#define PWSH3 ("\\shell\\condabin\\conda-hook.ps1 ; conda activate ")
-#define PWSH5 (" ; ")
-
 #ifdef PYTHONW
 #define PYTHONCMD ("pythonw ")
 #define CREATIONFLAGS (0)
