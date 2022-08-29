@@ -1,8 +1,8 @@
-CC = gcc
+CC = g++
 
 all:
-	$(CC) python.c -o python.exe
-	$(CC) python.c -D PYTHONW -o pythonw.exe
+	$(CC) python.cpp -o python.exe
+	$(CC) python.cpp -D PYTHONW -o pythonw.exe
 
 clean:
 	rm *.exe

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include <windows.h>
 
 #define PWSH1 ("powershell.exe -ExecutionPolicy ByPass -Command \"& ")
@@ -31,37 +31,31 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    char *preamble[] = {PWSH1, ANACONDAPATH, PWSH3, ANACONDAPATH, PWSH5, PYTHONCMD};
-    size_t plen = sizeof(preamble) / sizeof(preamble[0]);
-
-    // Calculate size (in chars) of commandline
-    size_t commandline_size = 1;
-    for (size_t i = 0; i < plen; i++)
-        commandline_size += strlen(preamble[i]);
-    for (size_t i = 1; i < argc; i++)
-        commandline_size += strlen(argv[i]) + 1;
-
-    // Assemble commandline
-    char *commandline = malloc(commandline_size);
-    char *end = commandline;
-    for (size_t i = 0; i < plen; i++)
-        end = strcpy_return_end(end, preamble[i]);
-    for (size_t i = 1; i < argc; i++)
+    std::string commandline = getenv("WINDIR");
+    commandline += "\\System32\\WindowsPowerShell\\v1.0\\powershell.exe ";
+    commandline += "-ExecutionPolicy ByPass -Command \"& ";
+    commandline += getenv("ANACONDAPATH");
+    commandline += "\\shell\\condabin\\conda-hook.ps1 ; conda activate ";
+    commandline += getenv("ANACONDAPATH");
+    commandline += " ; ";
+    commandline += PYTHONCMD;
+    for (int i = 1; i < argc; i++)
     {
-        end = strcpy_return_end(end, argv[i]);
-        end = strcpy_return_end(end, " ");
+        commandline += argv[i];
+        commandline += " ";
     }
+    commandline += " \"";
 
     // Create Python process
-    STARTUPINFO si;
+    STARTUPINFOA si;
     PROCESS_INFORMATION pi;
     ZeroMemory(&si, sizeof(si));
     ZeroMemory(&pi, sizeof(pi));
     si.cb = sizeof(si);
 
-    BOOL success = CreateProcess(
+    BOOL success = CreateProcessA(
         NULL,
-        commandline,
+        const_cast<char *>(commandline.c_str()),
         NULL,
         NULL,
         FALSE,
@@ -73,7 +67,6 @@ int main(int argc, char const *argv[])
 
     if (success)
     {
-        free(commandline);
         WaitForSingleObject(pi.hProcess, INFINITE);
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
