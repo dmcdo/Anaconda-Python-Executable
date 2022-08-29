@@ -10,14 +10,6 @@
 #define CREATIONFLAGS (CREATE_NEW_PROCESS_GROUP)
 #endif
 
-char *strcpy_return_end(char *dest, const char *src)
-{
-    while (*dest++ = *src++)
-        ;
-
-    return dest - 1;
-}
-
 int main(int argc, char const *argv[])
 {
     char *ANACONDAPATH = getenv("ANACONDAPATH");
